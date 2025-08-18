@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Savio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SavioWeb.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <section class="navigation">
+            <div class="nav-container">
+                <div class="brand">
+                    <a href="/Money/Index">LOGO</a>
+                </div>
+                <nav>
+                    <div class="nav-mobile">
+                        <a id="nav-toggle" href="#!"><span></span></a>
+                    </div>
+                    <ul class="nav-list">
+                        <li><a href="/Money/Index">Money</a></li>
+                        <li><a href="/About">About</a></li>
+                        <li>
+                            <a href="#!">Services</a>
+                            <ul class="nav-dropdown">
+                                <li><a href="#!">Web Design</a></li>
+                                <li><a href="#!">Web Development</a></li>
+                                <li><a href="#!">Graphic Design</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">Pricing</a></li>
+                        <li><a href="/User/GetUserList">User</a></li>
+                        <li><a href="/Graph/Index">Graph</a></li>
+
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    </header>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - SavioWeb
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var navToggle = document.getElementById("nav-toggle");
+            var navList = document.querySelector(".nav-list");
+
+            navToggle.addEventListener("click", function (e) {
+                e.preventDefault();
+                navToggle.classList.toggle("active");
+                navList.style.display = navList.style.display === "block" ? "none" : "block";
+            });
+
+            var dropdowns = document.querySelectorAll(".nav-list li:has(ul)");
+            dropdowns.forEach(function (li) {
+                li.addEventListener("mouseenter", function () {
+                    if (window.innerWidth >= 799) li.querySelector(".nav-dropdown").style.display = "block";
+                });
+                li.addEventListener("mouseleave", function () {
+                    if (window.innerWidth >= 799) li.querySelector(".nav-dropdown").style.display = "none";
+                });
+            });
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

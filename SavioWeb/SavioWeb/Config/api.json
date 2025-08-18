@@ -1,0 +1,10 @@
+{
+  "endpoint": "https://savioprod.onrender.com/",
+  "user": {
+    "getAll": "/user/GetAllUsers",
+    "create": "/user/CreateUser"
+  },
+  "admin": {
+    "getAll": "/admin/GetAllAdmins"
+  }
+}
