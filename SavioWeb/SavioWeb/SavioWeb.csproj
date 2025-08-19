@@ -10,4 +10,14 @@
     <Folder Include="Config\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Security.Permissions" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\@ref\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

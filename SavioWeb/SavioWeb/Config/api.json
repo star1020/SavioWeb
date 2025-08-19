@@ -1,10 +1,25 @@
 {
-  "endpoint": "https://savioprod.onrender.com/",
-  "user": {
-    "getAll": "/user/GetAllUsers",
-    "create": "/user/CreateUser"
-  },
-  "admin": {
-    "getAll": "/admin/GetAllAdmins"
-  }
+    "endpoint": "http://localhost:5037",
+    "user": {
+        "getAll": "/user/GetAllUsers",
+        "create": "/user/CreateUser"
+    },
+    "admin": {
+        "getAll": "/admin/GetAllAdmins"
+    },
+    "transaction": {
+        "getAllWithData": "/transaction/GetAllTransactionsWithData",
+        "addEdit": "/transaction/AddEditTransaction",
+        "delete": "/transaction/DeleteTransactionById"
+    },
+    "category": {
+        "getAllWithData": "/category/GetAllCategoriesWithData",
+        "addEdit": "/category/AddEditCategory",
+        "delete": "/category/DeleteCategoryById"
+    },
+    "notification": {
+        "getAllWithData": "/notification/GetAllNotificationsWithData",
+        "addEdit": "/notification/AddEditNotification",
+        "delete": "/notification/DeleteNotificationById"
+    }
 }

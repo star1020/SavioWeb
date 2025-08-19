@@ -28,6 +28,6 @@ app.UseAuthorization();
 // Route config
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Money}/{action=Index}/{id?}");
+    pattern: "{controller=Transaction}/{action=GetTransactionList}");
 
 app.Run();

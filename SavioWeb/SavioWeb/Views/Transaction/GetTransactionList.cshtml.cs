@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SavioWeb.Views.Money
+namespace SavioWeb.Views.Transaction
 {
-    public class MoneyModel : PageModel
+    public class TransactionModel : PageModel
     {
         public void OnGet()
         {
