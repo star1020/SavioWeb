@@ -1,0 +1,254 @@
+﻿@{
+    ViewData["Title"] = "Transaction";
+    var transactions = ViewData["TransactionList"] as TransactionResponse;
+}
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="~/css/transaction.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<main class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h4 class="mt-2">Transaction Table</h4>
+            </div>
+            <div class="col-md-6">
+                <form id="filter-form">
+                    <div class="d-flex bd-highlight justify-content-end">
+                        <div class="p-2 bd-highlight">
+                            <button type="submit" name="add" class="btn btn-primary d-inline" id="btnAdd">
+                                Add New Record <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table id="transaction" class="table table-bordered table-hover dt-responsive display" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Category ID</th>
+                                <th>Type</th>
+                                <th>Member ID</th>
+                                <th>Amount</th>
+                                <th>Record Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable with AJAX data loading
+        $.ajax({
+            url: '@Url.Action("GetTransactionList", "Transaction")',
+            type: "POST",
+            data: {}, // Define your input data here
+            success: function (response) {
+                console.log(response);
+
+                // Check if the response structure is correct
+                if (response && response.data && response.data.code === 0 && response.data.transaction) {
+                    let transactionData = response.data.transaction;
+
+                    console.log("First transaction object:", transactionData[0]);
+                    console.log("Available fields:", Object.keys(transactionData[0]));
+
+                    let tableColumns = [
+                        {
+                            data: "id",
+                            title: "ID",
+                            createdCell: function (td) {
+                                $(td).css({
+                                    "min-width": "80px",
+                                    "vertical-align": "middle"
+                                });
+                            }
+                        },
+                        {
+                            data: "user_id",
+                            title: "User ID",
+                            createdCell: function (td) {
+                                $(td).css({
+                                    "min-width": "100px",
+                                    "vertical-align": "middle"
+                                });
+                            }
+                        },
+                        {
+                            data: "category_id",
+                            title: "Category ID",
+                            createdCell: function (td) {
+                                $(td).css({
+                                    "min-width": "120px",
+                                    "vertical-align": "middle"
+                                });
+                            }
+                        },
+                        {
+                            data: "type",
+                            title: "Type",
+                            createdCell: function (td, cellData) {
+                                $(td).css({
+                                    "min-width": "100px",
+                                    "vertical-align": "middle"
+                                });
+                                // Add badge styling for type
+                                if (cellData === 'income') {
+                                    $(td).html('<span class="badge badge-success">' + cellData + '</span>');
+                                } else if (cellData === 'expense') {
+                                    $(td).html('<span class="badge badge-danger">' + cellData + '</span>');
+                                }
+                            }
+                        },
+                        {
+                            data: "member_id",
+                            title: "Member ID",
+                            createdCell: function (td) {
+                                $(td).css({
+                                    "min-width": "110px",
+                                    "vertical-align": "middle"
+                                });
+                            }
+                        },
+                        {
+                            data: "value", // Changed from "amount" to "value" based on your model
+                            title: "Amount",
+                            createdCell: function (td, cellData) {
+                                $(td).css({
+                                    "min-width": "100px",
+                                    "vertical-align": "middle",
+                                    "text-align": "right"
+                                });
+                                if (cellData !== null && cellData !== undefined) {
+                                    $(td).html('$' + parseFloat(cellData).toFixed(2));
+                                } else {
+                                    $(td).html('-');
+                                }
+                            }
+                        },
+                        {
+                            data: "record_date", // Changed from "created_at" to "record_date" based on your model
+                            title: "Record Date",
+                            createdCell: function (td, cellData) {
+                                $(td).css({
+                                    "min-width": "120px",
+                                    "vertical-align": "middle"
+                                });
+                                // Format date if needed
+                                if (cellData) {
+                                    let date = new Date(cellData);
+                                    $(td).html(date.toLocaleDateString());
+                                } else {
+                                    $(td).html('-');
+                                }
+                            }
+                        }
+                    ];
+
+                    // Initialize DataTable
+                    var table = $('#transaction').DataTable({
+                        "data": transactionData, // Use the correct data array
+                        "columns": tableColumns,
+                        "search": true,
+                        "order": [[0, 'desc']], // Order by ID descending to show newest first
+                        "lengthMenu": [5, 10, 25, 50],
+                        "pageLength": 10,
+                        "autoWidth": false,
+                        "fixedHeader": true,
+                        "responsive": true,
+                        "columnDefs": [
+                            {
+                                "targets": "_all",
+                                "visible": true,
+                                "searchable": true,
+                                "orderable": true,
+                                "className": "align-middle"
+                            }
+                        ],
+                        "language": {
+                            "search": "Search:",
+                            "lengthMenu": "Show _MENU_ entries",
+                            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                            "infoEmpty": "Showing 0 to 0 of 0 entries",
+                            "infoFiltered": "(filtered from _MAX_ total entries)",
+                            "paginate": {
+                                "first": "First",
+                                "last": "Last",
+                                "next": "Next",
+                                "previous": "Previous"
+                            }
+                        }
+                    });
+                } else {
+                    console.error("Invalid response structure:", response);
+                    initializeEmptyTable();
+                    showErrorMessage("Invalid data structure received from server.");
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error loading transaction data:", textStatus, errorThrown);
+                initializeEmptyTable();
+                showErrorMessage("Unable to load transaction data. Please refresh the page or contact support.");
+            }
+        });
+
+        // Function to initialize empty table on error
+        function initializeEmptyTable() {
+            $('#transaction').DataTable({
+                "search": true,
+                "order": [[0, 'asc']],
+                "lengthMenu": [5, 10, 25, 50],
+                "pageLength": 10,
+                "autoWidth": false,
+                "fixedHeader": true,
+                "responsive": true,
+                "language": {
+                    "search": "Search:",
+                    "lengthMenu": "Show _MENU_ entries",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "infoFiltered": "(filtered from _MAX_ total entries)"
+                }
+            });
+        }
+
+        // Function to show error messages
+        function showErrorMessage(message) {
+            if (typeof toast_generate === 'function') {
+                toast_generate(message, "error", "", null);
+            } else {
+                alert(message);
+            }
+        }
+
+        $('#btnAdd').on('click', function(e) {
+            e.preventDefault();
+            console.log('Add new record clicked');
+            // Add your logic for adding new records here
+        });
+    });
+</script>

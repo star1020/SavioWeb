@@ -8,6 +8,10 @@ namespace SavioWeb.Controllers
 {
     public class TransactionController : Controller
     {
+        public ActionResult TransactionList()
+        {
+            return View();
+        }
         public async Task<IActionResult> GetTransactionList()
         {
 
@@ -36,19 +40,19 @@ namespace SavioWeb.Controllers
                         var parsed = JsonConvert.DeserializeObject<TransactionResponse>(responseData);
 
                         ViewData["TransactionList"] = parsed;
-                        return View();
+                        return Json(new { success = true, data = parsed });
                     }
                     else
                     {
                         Console.WriteLine($"API call failed with status code: {response.StatusCode}");
-                        return View();
+                        return Json(new { success = false, message = "API call failed." });
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                return Json(new { draw = 0, recordsFiltered = 0, recordsTotal = 0, data = 0 });
+                return Json(new { success = false, message = "API call failed." });
             }
             
         }
