@@ -1,5 +1,5 @@
 {
-    "endpoint": "https://savioprod.onrender.com",
+    "endpoint": "http://localhost:5037",
     "user": {
         "getAll": "/user/GetAllUsers",
         "create": "/user/CreateUser"

@@ -18,6 +18,8 @@
 /* Table styling */
 #transaction {
     border-collapse: collapse;
+    margin: 0;
+    padding: 0;
 }
 
 #transaction tbody td {
@@ -27,4 +29,8 @@
 /* Hover effects for header */
 #transaction thead th:hover {
     background-color: #495057 !important;
+}
+
+.table-responsive {
+    overflow-x:hidden !important;
 }

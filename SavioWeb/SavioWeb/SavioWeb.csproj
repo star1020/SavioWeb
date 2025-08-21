@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Config\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Security.Permissions" Version="9.0.8" />
   </ItemGroup>
 

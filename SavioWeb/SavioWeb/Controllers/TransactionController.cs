@@ -2,21 +2,25 @@
 using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SavioWeb.Config;
 using SavioWeb.Models;
 
 namespace SavioWeb.Controllers
 {
     public class TransactionController : Controller
     {
+        private readonly IApiConfigProvider _apiConfigProvider;
+        public TransactionController(IApiConfigProvider apiConfigProvider)
+        {
+            _apiConfigProvider = apiConfigProvider;
+        }
         public ActionResult TransactionList()
         {
             return View();
         }
         public async Task<IActionResult> GetTransactionList()
         {
-
-            var json = await System.IO.File.ReadAllTextAsync("Config/api.json");
-            var apiConfig = JsonConvert.DeserializeObject<ApiConfig>(json);
+            var apiConfig = await _apiConfigProvider.GetApiConfigAsync();
 
             try
             {

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.3.1/css/rowGroup.dataTables.min.css" />
 </head>
 
 <main class="main">
@@ -36,7 +37,6 @@
                     <table id="transaction" class="table table-bordered table-hover dt-responsive display" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>User ID</th>
                                 <th>Category ID</th>
                                 <th>Type</th>
@@ -59,18 +59,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/rowgroup/1.3.1/js/dataTables.rowGroup.min.js"></script>
 
 <script>
     $(document).ready(function () {
-        // Initialize DataTable with AJAX data loading
         $.ajax({
             url: '@Url.Action("GetTransactionList", "Transaction")',
             type: "POST",
-            data: {}, // Define your input data here
+            data: {},
             success: function (response) {
                 console.log(response);
 
-                // Check if the response structure is correct
                 if (response && response.data && response.data.code === 0 && response.data.transaction) {
                     let transactionData = response.data.transaction;
 
@@ -79,21 +78,10 @@
 
                     let tableColumns = [
                         {
-                            data: "id",
-                            title: "ID",
-                            createdCell: function (td) {
-                                $(td).css({
-                                    "min-width": "80px",
-                                    "vertical-align": "middle"
-                                });
-                            }
-                        },
-                        {
                             data: "user_id",
                             title: "User ID",
                             createdCell: function (td) {
                                 $(td).css({
-                                    "min-width": "100px",
                                     "vertical-align": "middle"
                                 });
                             }
@@ -103,7 +91,6 @@
                             title: "Category ID",
                             createdCell: function (td) {
                                 $(td).css({
-                                    "min-width": "120px",
                                     "vertical-align": "middle"
                                 });
                             }
@@ -113,10 +100,8 @@
                             title: "Type",
                             createdCell: function (td, cellData) {
                                 $(td).css({
-                                    "min-width": "100px",
                                     "vertical-align": "middle"
                                 });
-                                // Add badge styling for type
                                 if (cellData === 'income') {
                                     $(td).html('<span class="badge badge-success">' + cellData + '</span>');
                                 } else if (cellData === 'expense') {
@@ -129,17 +114,15 @@
                             title: "Member ID",
                             createdCell: function (td) {
                                 $(td).css({
-                                    "min-width": "110px",
                                     "vertical-align": "middle"
                                 });
                             }
                         },
                         {
-                            data: "value", // Changed from "amount" to "value" based on your model
+                            data: "value",
                             title: "Amount",
                             createdCell: function (td, cellData) {
                                 $(td).css({
-                                    "min-width": "100px",
                                     "vertical-align": "middle",
                                     "text-align": "right"
                                 });
@@ -151,14 +134,12 @@
                             }
                         },
                         {
-                            data: "record_date", // Changed from "created_at" to "record_date" based on your model
+                            data: "record_date",
                             title: "Record Date",
                             createdCell: function (td, cellData) {
                                 $(td).css({
-                                    "min-width": "120px",
                                     "vertical-align": "middle"
                                 });
-                                // Format date if needed
                                 if (cellData) {
                                     let date = new Date(cellData);
                                     $(td).html(date.toLocaleDateString());
@@ -169,12 +150,11 @@
                         }
                     ];
 
-                    // Initialize DataTable
                     var table = $('#transaction').DataTable({
-                        "data": transactionData, // Use the correct data array
+                        "data": transactionData,
                         "columns": tableColumns,
                         "search": true,
-                        "order": [[0, 'desc']], // Order by ID descending to show newest first
+                        "order": [[5, 'desc']], // Sort by Record Date (index 5) descending
                         "lengthMenu": [5, 10, 25, 50],
                         "pageLength": 10,
                         "autoWidth": false,
@@ -189,6 +169,22 @@
                                 "className": "align-middle"
                             }
                         ],
+                        "rowGroup": {
+                            "dataSrc": function (row) {
+                                if (row.record_date) {
+                                    let date = new Date(row.record_date);
+                                    return date.toLocaleDateString();
+                                }
+                                return "No Date";
+                            },
+                            "startRender": function (rows, group) {
+                                return $('<tr/>')
+                                    .append('<td colspan="6" style="background:#f0f0f0; font-weight:bold; padding:10px;">' +
+                                           '<i class="fas fa-calendar-alt"></i> ' + group +
+                                           ' (' + rows.count() + ' transactions)' +
+                                           '</td>');
+                            }
+                        },
                         "language": {
                             "search": "Search:",
                             "lengthMenu": "Show _MENU_ entries",

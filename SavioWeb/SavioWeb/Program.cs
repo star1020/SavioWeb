@@ -1,6 +1,8 @@
+using SavioWeb.Config;
 var builder = WebApplication.CreateBuilder(args);
-
+var env = builder.Configuration["Environment"];
 // Add services to the container.
+builder.Services.AddScoped<IApiConfigProvider, ApiConfigProvider>();
 builder.Services.AddControllersWithViews();
 
 // Only set URLs if running on Render (where PORT env var is set)
