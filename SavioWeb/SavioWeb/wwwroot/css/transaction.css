@@ -1,21 +1,18 @@
-﻿/* Dark header styling */
-#transaction thead th {
+﻿#transaction thead th {
     background-color: #343a40 !important;
     color: white !important;
     border-color: #495057 !important;
 }
 
-    /* Sorting icons styling */
-    #transaction thead th.sorting:before,
-    #transaction thead th.sorting:after,
-    #transaction thead th.sorting_asc:before,
-    #transaction thead th.sorting_asc:after,
-    #transaction thead th.sorting_desc:before,
-    #transaction thead th.sorting_desc:after {
-        color: white !important;
-    }
+#transaction thead th.sorting:before,
+#transaction thead th.sorting:after,
+#transaction thead th.sorting_asc:before,
+#transaction thead th.sorting_asc:after,
+#transaction thead th.sorting_desc:before,
+#transaction thead th.sorting_desc:after {
+    color: white !important;
+}
 
-/* Table styling */
 #transaction {
     border-collapse: collapse;
     margin: 0;
@@ -26,11 +23,32 @@
     border: 1px solid #dee2e6;
 }
 
-/* Hover effects for header */
 #transaction thead th:hover {
     background-color: #495057 !important;
 }
 
 .table-responsive {
     overflow-x:hidden !important;
+}
+
+.group-header {
+    user-select: none;
+    transition: background-color 0.3s ease;
+}
+
+.group-header:hover {
+    background-color: #e6f3ff !important;
+}
+
+.group-toggle {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.group-header td {
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+.group-header + tr td {
+    border-top: none !important;
 }

@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Transaction";
     var transactions = ViewData["TransactionList"] as TransactionResponse;
+    var categories = ViewData["CategoryList"] as CategoryResponse;
 }
 
 <head>
@@ -10,6 +11,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.3.1/css/rowGroup.dataTables.min.css" />
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css">
 </head>
 
 <main class="main">
@@ -54,12 +57,139 @@
     </div>
 </main>
 
+<!-- Add New Transaction Modal -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1" role="dialog" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addTransactionModalLabel">
+                    <i class="fas fa-plus-circle"></i> Add New Transaction
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addTransactionForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="userId" class="form-label">
+                                    <i class="fas fa-user"></i> User ID <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="userId" name="userId" required>
+                                <small class="form-text text-muted">Enter the user identifier</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="categoryId" class="form-label">
+                                    <i class="fas fa-tags"></i> Category ID <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control" id="categoryId" name="categoryId" required>
+                                    <option value="">Select Category</option>
+                                    <option value="1">Food & Dining</option>
+                                    <option value="2">Transportation</option>
+                                    <option value="3">Shopping</option>
+                                    <option value="4">Entertainment</option>
+                                    <option value="5">Bills & Utilities</option>
+                                    <option value="6">Healthcare</option>
+                                    <option value="7">Education</option>
+                                    <option value="8">Travel</option>
+                                    <option value="9">Pet</option>
+                                    <option value="10">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="transactionType" class="form-label">
+                                    <i class="fas fa-exchange-alt"></i> Transaction Type <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control" id="transactionType" name="transactionType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="income">Income</option>
+                                    <option value="expense">Expense</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="memberId" class="form-label">
+                                    <i class="fas fa-id-card"></i> Member ID <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="memberId" name="memberId" required>
+                                <small class="form-text text-muted">Enter the member identifier</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="amount" class="form-label">
+                                    <i class="fas fa-dollar-sign"></i> Amount <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" required>
+                                </div>
+                                <small class="form-text text-muted">Enter amount without currency symbol</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="recordDate" class="form-label">
+                                    <i class="fas fa-calendar"></i> Record Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="recordDate" name="recordDate" required>
+                                <small class="form-text text-muted">Select transaction date</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description" class="form-label">
+                                    <i class="fas fa-comment"></i> Description (Optional)
+                                </label>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter transaction description or notes..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> All fields marked with <span class="text-danger">*</span> are required.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-success" id="saveTransaction">
+                    <i class="fas fa-save"></i> Save Transaction
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/rowgroup/1.3.1/js/dataTables.rowGroup.min.js"></script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -150,11 +280,14 @@
                         }
                     ];
 
+                    var currentDateOrder = 'desc';
+                    var columnSortState = {};
+
                     var table = $('#transaction').DataTable({
                         "data": transactionData,
                         "columns": tableColumns,
                         "search": true,
-                        "order": [[5, 'desc']], // Sort by Record Date (index 5) descending
+                        "order": [[5, 'desc']],
                         "lengthMenu": [5, 10, 25, 50],
                         "pageLength": 10,
                         "autoWidth": false,
@@ -178,12 +311,91 @@
                                 return "No Date";
                             },
                             "startRender": function (rows, group) {
-                                return $('<tr/>')
-                                    .append('<td colspan="6" style="background:#f0f0f0; font-weight:bold; padding:10px;">' +
+                                var groupId = 'group-' + group.replace(/[^a-zA-Z0-9]/g, '-');
+                                return $('<tr class="group-header" data-group="' + groupId + '" style="background:#f0f0f0; font-weight:bold; padding:10px; cursor:pointer;">')
+                                    .append('<td colspan="6" style="padding:10px;">' +
+                                           '<i class="fas fa-chevron-down group-toggle" style="margin-right:8px; transition:transform 0.3s;"></i>' +
                                            '<i class="fas fa-calendar-alt"></i> ' + group +
                                            ' (' + rows.count() + ' transactions)' +
                                            '</td>');
                             }
+                        },
+                        "initComplete": function() {
+                            var api = this.api();
+
+                            $('#transaction tbody').on('click', 'tr.group-header', function() {
+                                var $this = $(this);
+                                var groupId = $this.data('group');
+                                var $toggleIcon = $this.find('.group-toggle');
+
+                                var $groupRows = $();
+                                var $currentRow = $this.next();
+
+                                while ($currentRow.length && !$currentRow.hasClass('group-header')) {
+                                    $groupRows = $groupRows.add($currentRow);
+                                    $currentRow = $currentRow.next();
+                                }
+
+                                $groupRows.toggle();
+
+                                if ($groupRows.first().is(':visible')) {
+                                    $toggleIcon.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+                                    $toggleIcon.css('transform', 'rotate(0deg)');
+                                } else {
+                                    $toggleIcon.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+                                    $toggleIcon.css('transform', 'rotate(-90deg)');
+                                }
+                            });
+
+                            $('#transaction tbody').on('mouseenter', 'tr.group-header', function() {
+                                $(this).css('background', '#e6f3ff');
+                            }).on('mouseleave', 'tr.group-header', function() {
+                                $(this).css('background', '#f0f0f0');
+                            });
+
+                            $('#transaction thead th:eq(5)').on('click', function(e) {
+                                e.stopImmediatePropagation();
+
+                                currentDateOrder = (currentDateOrder === 'desc') ? 'asc' : 'desc';
+
+                                var currentOrder = api.order();
+                                var otherColumns = [];
+
+                                for (var i = 0; i < currentOrder.length; i++) {
+                                    if (currentOrder[i][0] !== 5) {
+                                        otherColumns.push(currentOrder[i]);
+                                    }
+                                }
+
+                                var newOrder = [[5, currentDateOrder]].concat(otherColumns);
+                                api.order(newOrder).draw();
+
+                                $('#transaction thead th:not(:eq(5))').removeClass('sorting_asc sorting_desc').addClass('sorting');
+                                $('#transaction thead th:eq(5)').removeClass('sorting').addClass('sorting_' + currentDateOrder);
+                            });
+
+                            $('#transaction thead th:not(:eq(5))').on('click', function(e) {
+                                e.stopImmediatePropagation();
+
+                                var columnIndex = $(this).index();
+
+                                if (!columnSortState[columnIndex]) {
+                                    columnSortState[columnIndex] = 'asc';
+                                } else {
+                                    columnSortState[columnIndex] = (columnSortState[columnIndex] === 'asc') ? 'desc' : 'asc';
+                                }
+
+                                var currentColumnOrder = columnSortState[columnIndex];
+
+                                console.log('Column ' + columnIndex + ' clicked, direction: ' + currentColumnOrder);
+
+                                var newOrder = [[5, currentDateOrder], [columnIndex, currentColumnOrder]];
+                                api.order(newOrder).draw();
+
+                                $('#transaction thead th:not(:eq(5))').removeClass('sorting_asc sorting_desc').addClass('sorting');
+                                $(this).removeClass('sorting').addClass('sorting_' + currentColumnOrder);
+                                $('#transaction thead th:eq(5)').removeClass('sorting').addClass('sorting_' + currentDateOrder);
+                            });
                         },
                         "language": {
                             "search": "Search:",
@@ -212,7 +424,6 @@
             }
         });
 
-        // Function to initialize empty table on error
         function initializeEmptyTable() {
             $('#transaction').DataTable({
                 "search": true,
@@ -232,19 +443,144 @@
             });
         }
 
-        // Function to show error messages
         function showErrorMessage(message) {
-            if (typeof toast_generate === 'function') {
-                toast_generate(message, "error", "", null);
-            } else {
-                alert(message);
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        function showSuccessMessage(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: message,
+                confirmButtonColor: '#28a745',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        function showInfoMessage(message) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Information',
+                text: message,
+                confirmButtonColor: '#17a2b8',
+                confirmButtonText: 'OK'
+            });
         }
 
         $('#btnAdd').on('click', function(e) {
             e.preventDefault();
-            console.log('Add new record clicked');
-            // Add your logic for adding new records here
+
+            $('#addTransactionForm')[0].reset();
+
+            var today = new Date();
+            var dateString = today.getFullYear() + '-' +
+                            String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                            String(today.getDate()).padStart(2, '0');
+            $('#recordDate').val(dateString);
+
+            $('#addTransactionModal').modal('show');
+        });
+
+        $('#saveTransaction').on('click', function(e) {
+            e.preventDefault();
+
+            var form = $('#addTransactionForm')[0];
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            var formData = {
+                user_id: $('#userId').val(),
+                category_id: $('#categoryId').val(),
+                type: $('#transactionType').val(),
+                member_id: $('#memberId').val(),
+                value: parseFloat($('#amount').val()),
+                record_date: $('#recordDate').val(),
+                description: $('#description').val()
+            };
+
+            console.log('New transaction data:', formData);
+
+            $('#saveTransaction').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+
+            $.ajax({
+                url: '@Url.Action("AddTransaction", "Transaction")',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#saveTransaction').prop('disabled', false).html('<i class="fas fa-save"></i> Save Transaction');
+                    $('#addTransactionModal').modal('hide');
+
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Transaction added successfully! Page will refresh automatically.',
+                            confirmButtonColor: '#28a745',
+                            confirmButtonText: 'OK',
+                            timer: 3000,
+                            timerProgressBar: true,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then((result) => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'An error occurred while saving the transaction',
+                            confirmButtonColor: '#dc3545',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#saveTransaction').prop('disabled', false).html('<i class="fas fa-save"></i> Save Transaction');
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Save Failed',
+                        text: 'Failed to save transaction. Please try again.',
+                        confirmButtonColor: '#dc3545',
+                        confirmButtonText: 'OK'
+                    });
+
+                    console.error('Error saving transaction:', error);
+                }
+            });
+        });
+
+        $('#transactionType').on('change', function() {
+            var type = $(this).val();
+            var $amountGroup = $('#amount').closest('.form-group');
+
+            if (type === 'income') {
+                $amountGroup.find('label').removeClass('text-danger').addClass('text-success');
+                $('#amount').removeClass('border-danger').addClass('border-success');
+            } else if (type === 'expense') {
+                $amountGroup.find('label').removeClass('text-success').addClass('text-danger');
+                $('#amount').removeClass('border-success').addClass('border-danger');
+            } else {
+                $amountGroup.find('label').removeClass('text-success text-danger');
+                $('#amount').removeClass('border-success border-danger');
+            }
+        });
+
+        $('#amount').on('blur', function() {
+            var value = parseFloat($(this).val());
+            if (!isNaN(value)) {
+                $(this).val(value.toFixed(2));
+            }
         });
     });
 </script>
